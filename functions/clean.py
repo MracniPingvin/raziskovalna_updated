@@ -7,9 +7,11 @@ def reverse(shape):
     return(new)
 
 def clean(matrix_list):
+    # cleans the list of possible solutions of those that are the same or could connect into different geometries
     clean_matrix_list=[]
     flag=True
     first=True
+    # cleans all of the reflections, translations of the stable lattices that appeared during generation
     for i in matrix_list:
         if first==True:
             clean_matrix_list.append(i)
@@ -28,6 +30,7 @@ def clean(matrix_list):
                 flag=True
     indexes=[]
     count=0
+    # cleans all of the possible lattices with the same connection matrix, that connect into different geometries
     for i in clean_matrix_list:
         count=0
         for j in clean_matrix_list:

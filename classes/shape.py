@@ -1,15 +1,15 @@
 __author__ = 'FAMILY'
-import time
+
 
 class Shape(object):
     def __init__(self, graph, shape, start_point, orientation, first=1):
 
-        self.graph = graph
-        self.shape = shape
-        self.start_point = start_point
-        self.orientation = orientation
-        self.sizex = graph.graph_sizex
-        self.first = first
+        self.graph = graph  # graph that the shape will be drawn into
+        self.shape = shape  # change of the direction of the chain at each node
+        self.start_point = start_point  # node index that the chain will start in the graph
+        self.orientation = orientation  # orientation of the first segment of the chain
+        self.sizex = graph.graph_sizex  # number of nodes in a row in the graph
+        self.first = first  # layer that the shape belongs to
         if first == 1:
             self.alphabet = graph.alphabet[0]
         elif first == 2:
@@ -17,15 +17,24 @@ class Shape(object):
         else:
             self.alphabet = graph.alphabet[2]
 
-        self.edge_list = self.init_edges()
+        self.segment_list = self.init_edges()
 
     def init_edges(self):
+        # generates the segments listed as [start node, end node, segment orientation, segment letter]
         _start_point = self.start_point
         _orientation = self.orientation
         temp = []
         count = 0
-
-        if self.graph.type == "triangular":
+        if self.graph.graph_type == "triangular":
+            """
+                there are 6 possible orientations:
+                    0 - horizontal, facing right
+                    1 - diagonal, facing down and right
+                    2 - diagonal, facing down and left
+                    3 - horizontal, facing left
+                    4 - diagonal, facing up and left
+                    5 - diagonal, facing up and right
+            """
             if (_start_point // 10) % 2 == 0:
                 row_switch = 1
                 arow_switch = 0
@@ -84,7 +93,14 @@ class Shape(object):
                 if _orientation == 5:
                     temp.append([_start_point,_start_point - self.sizex + arow_switch,_orientation, self.alphabet[count]])
                     _start_point += -self.sizex + arow_switch
-        elif self.graph.type == "squared":
+        elif self.graph.graph_type == "squared":
+            """
+            there are 4 possible orientations:
+                    0 - horizontal, facing right
+                    1 - vertical, facing down
+                    2 - horizontal, facing left
+                    3 - vertical, facing up
+            """
             if _orientation == 0:
                 temp.append([_start_point, _start_point + 1, _orientation, self.alphabet[count]])
                 _start_point += 1
@@ -121,6 +137,7 @@ class Shape(object):
                     _start_point = _start_point - self.sizex
         return temp
     def get_size(self):
+        # returns the span of the shape in each direction
         _orientation = self.orientation
         x = 0
         y = 0
@@ -128,7 +145,8 @@ class Shape(object):
         maxx = x
         miny = y
         maxy = y
-        if self.graph.type == "triangular":
+        if self.graph.graph_type == "triangular":
+            # in triangular graps, the span changes with each row because of the nature of the connections
             if (self.start_point // 10) % 2 == 0:
                 row_switch = 1
                 arow_switch = 0
@@ -199,7 +217,7 @@ class Shape(object):
                     maxx = x
                 if y > maxy:
                     maxy = y
-        elif self.graph.type == "squared":
+        elif self.graph.graph_type == "squared":
             if _orientation == 0:
                 x += 1
             elif _orientation == 1:

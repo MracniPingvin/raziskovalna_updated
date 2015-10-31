@@ -1,7 +1,19 @@
 __author__ = 'FAMILY'
 import itertools
 
-def generate(type,length,max_movex,max_movey,max_offset, max_startx ,max_starty, graph_size):
+
+def generate(type, length, max_movex, max_movey, max_offset, max_startx, max_starty):
+    """
+    generates all of the combinations of the parameters for graph.draw_layers within the limits of these parameters:
+        type: "triangular" or "squared"
+        length: length of the chains inputed as [length of chain1,length of chain2,length of chain3]
+        max_movex: max movex that will be tested
+        max_movey: max movey that will be tested
+        max_offset: max delta_offset that will be tested
+        max_startx: max startx that will be tested
+        max_starty: max starty that will be tested
+        graph_size:
+    """
     if type == "squared":
         for combination in itertools.product(range(-1,2), repeat=length-1):
             str1=list(map(int, combination))

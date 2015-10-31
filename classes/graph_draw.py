@@ -2,23 +2,26 @@ __author__ = 'FAMILY'
 from tkinter import *
 
 class GraphDraw(object):
+    # class used for drawing an instance of class Graph
     def __init__(self, graph, size, sizex):
 
-        self.graph = graph
-        self.size = size
-        self.sizex = sizex
+        self.graph = graph  # graph to be drawn
+        self.size = size  # size in px
+        self.sizex = sizex  # number of nodes in each row
 
+        # square canvas
         self.canvas_width = self.size
         self.canvas_height = self.size
 
-        self.node_map = self.generate_node_map()
+        self.node_map = self.generate_node_map()  # the coordinates of each node
 
-        self.line_thickness = 5
-        self.circle_radius = 10
+        self.line_thickness = 5  # thickness of the connection lines
+        self.circle_radius = 10  # radius of the node circles
 
-        self.shape_queue = []
+        self.shape_queue = []  # list of instances of class Shape to be drawn
 
     def draw(self):
+        # creates canvas and draws the elements on it
         master = Tk()
         self.canvas = Canvas(master, width=self.canvas_width, height=self.canvas_height)
         self.canvas.pack()
@@ -31,21 +34,24 @@ class GraphDraw(object):
         return self.canvas.create_oval(x - r, y - r, x + r, y + r, **kwargs)
 
     def generate_node_map(self):
+        # generates the list of coordinates of the nodes in the graph, depending on the type of the graph
         distance = self.size // (self.sizex + 1)
         node_map = []
         for j in range(self.sizex):
             for i in range(self.sizex):
-                if self.graph.type == "triangular" and j%2 != 0:
+                if self.graph.graph_type == "triangular" and j % 2 != 0:
                     node_map.append([1.5 *distance + i * distance, distance + j * distance])
                 else:
                     node_map.append([distance + i * distance,distance + j * distance])
         return node_map
 
     def draw_node_map(self):
+        # draws circles on the coordinates in node_map
         for i in self.node_map:
             self.create_circle(i[0], i[1], self.circle_radius, fill="cyan")
 
     def connect_nodes_triangular(self,edge,first=1,direction=None):
+        # draws a segment of a shape in a triangular graph according to the layer the shape belongs to
         start_node = edge[0]
         end_node = edge[1]
         letter = edge[3]
@@ -227,6 +233,7 @@ class GraphDraw(object):
                                         text=letter,fill="#0000FF")
 
     def connect_nodes_squared(self, edge, first=1, direction=None):
+        # draws a segment of a shape in a squared graph according to the layer the shape belongs to
         start_node = edge[0]
         end_node = edge[1]
         letter = edge[3]
@@ -356,18 +363,19 @@ class GraphDraw(object):
                                         text=letter, fill="#0000FF")
 
     def draw_shape(self, shape):
+        # draws all the segments of a shape
         count = 0
         first = shape.first
 
-        for i in shape.edge_list:
+        for i in shape.segment_list:
             if count == 0:
-                if self.graph.type=="triangular":
+                if self.graph.graph_type == "triangular":
                     self.connect_nodes_triangular(i, first, i[2])
-                elif self.graph.type=="squared":
+                elif self.graph.graph_type == "squared":
                     self.connect_nodes_squared(i, first, i[2])
             else:
-                if self.graph.type=="triangular":
+                if self.graph.graph_type == "triangular":
                     self.connect_nodes_triangular(i, first)
-                elif self.graph.type=="squared":
+                elif self.graph.graph_type == "squared":
                     self.connect_nodes_squared(i, first)
             count += 1
